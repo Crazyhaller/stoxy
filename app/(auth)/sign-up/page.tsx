@@ -33,7 +33,6 @@ const SignUp = () => {
 
   const onSubmit = async (data: SignUpFormData) => {
     try {
-      console.log('Form Data:', data)
     } catch (error) {
       console.error('Error during sign-up:', error)
     }
