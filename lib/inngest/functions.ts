@@ -1,3 +1,4 @@
+import { sendWelcomeEmail } from '../nodemailer'
 import { inngest } from './client'
 import { PERSONALIZED_WELCOME_EMAIL_PROMPT } from './prompts'
 
@@ -35,7 +36,14 @@ export const sendSignUpEmail = inngest.createFunction(
         (part && 'text' in part ? part.text : null) ||
         'Thanks for joining Stoxy. You now have access to personalized stock insights to help you achieve your investment goals.'
 
-      // TODO: Email sending logic goes here
+      const {
+        data: { email, name },
+      } = event
+      return await sendWelcomeEmail({
+        email,
+        name,
+        intro: introText,
+      })
     })
 
     return {
