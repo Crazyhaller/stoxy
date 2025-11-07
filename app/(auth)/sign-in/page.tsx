@@ -3,9 +3,14 @@
 import FooterLink from '@/components/forms/FooterLink'
 import InputField from '@/components/forms/InputField'
 import { Button } from '@/components/ui/button'
+import { signInWithEmail } from '@/lib/actions/auth.actions'
+import { useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
+import { toast } from 'sonner'
 
 const SignIn = () => {
+  const router = useRouter()
+
   const {
     register,
     handleSubmit,
@@ -20,10 +25,19 @@ const SignIn = () => {
 
   const onSubmit = async (data: SignInFormData) => {
     try {
-      console.log('Sign-in Data:', data)
-      // TODO: Add your sign-in logic here (API call or authentication)
+      const result = await signInWithEmail(data)
+      if (result.success) {
+        router.push('/')
+      }
     } catch (error) {
       console.error('Error during sign-in:', error)
+      toast.error(
+        'Failed to sign in. Please check your credentials and try again.',
+        {
+          description:
+            error instanceof Error ? error.message : 'Failed to sign in.',
+        }
+      )
     }
   }
 
