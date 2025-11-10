@@ -5,8 +5,6 @@ import { POPULAR_STOCK_SYMBOLS } from '@/lib/constants'
 import { cache } from 'react'
 
 const FINNHUB_BASE_URL = 'https://finnhub.io/api/v1'
-const NEXT_PUBLIC_FINNHUB_API_KEY =
-  process.env.NEXT_PUBLIC_FINNHUB_API_KEY ?? ''
 
 interface FinnhubProfile extends ProfileData {
   ticker?: string
@@ -41,7 +39,7 @@ export async function getNews(
 ): Promise<MarketNewsArticle[]> {
   try {
     const range = getDateRange(5)
-    const token = process.env.FINNHUB_API_KEY ?? NEXT_PUBLIC_FINNHUB_API_KEY
+    const token = process.env.FINNHUB_API_KEY
     if (!token) {
       throw new Error('FINNHUB API key is not configured')
     }
@@ -121,7 +119,7 @@ export async function getNews(
 export const searchStocks = cache(
   async (query?: string): Promise<StockWithWatchlistStatus[]> => {
     try {
-      const token = process.env.FINNHUB_API_KEY ?? NEXT_PUBLIC_FINNHUB_API_KEY
+      const token = process.env.FINNHUB_API_KEY
       if (!token) {
         // If no token, log and return empty to avoid throwing per requirements
         console.error(
