@@ -68,7 +68,18 @@ export default function SearchCommand({
   return (
     <>
       {renderAs === 'text' ? (
-        <span onClick={() => setOpen(true)} className="search-text">
+        <span
+          onClick={() => setOpen(true)}
+          role="button"
+          tabIndex={0}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === '') {
+              e.preventDefault()
+              setOpen(true)
+            }
+          }}
+          className="search-text"
+        >
           {label}
         </span>
       ) : (
@@ -119,7 +130,6 @@ export default function SearchCommand({
                         {stock.symbol} | {stock.exchange} | {stock.type}
                       </div>
                     </div>
-                    {/*<Star />*/}
                   </Link>
                 </li>
               ))}
