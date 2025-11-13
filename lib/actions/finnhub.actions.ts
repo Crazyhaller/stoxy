@@ -3,6 +3,7 @@
 import { getDateRange, validateArticle, formatArticle } from '@/lib/utils'
 import { POPULAR_STOCK_SYMBOLS } from '@/lib/constants'
 import { cache } from 'react'
+import { getWatchlistSymbolsByEmail } from './watchlist.actions'
 
 const FINNHUB_BASE_URL = 'https://finnhub.io/api/v1'
 
@@ -213,3 +214,38 @@ export const searchStocks = cache(
     }
   }
 )
+
+/**
+ * Enriches search results with watchlist status for the given user email
+ */
+export async function enrichSearchWithWatchlist(
+  stocks: StockWithWatchlistStatus[],
+  userEmail?: string
+): Promise<StockWithWatchlistStatus[]> {
+  if (!userEmail) return stocks
+
+  try {
+    const watchlistSymbols = await getWatchlistSymbolsByEmail(userEmail)
+    const watchlistSet = new Set(watchlistSymbols.map((s) => s.toUpperCase()))
+
+    return stocks.map((stock) => ({
+      ...stock,
+      isInWatchlist: watchlistSet.has(stock.symbol.toUpperCase()),
+    }))
+  } catch (error) {
+    console.error('Error enriching search with watchlist:', error)
+    return stocks
+  }
+}
+
+/**
+ * Search stocks and enrich with watchlist status for a user
+ */
+export async function searchStocksWithWatchlist(
+  query?: string,
+  userEmail?: string
+): Promise<StockWithWatchlistStatus[]> {
+  const stocks = await searchStocks(query)
+  if (!userEmail) return stocks
+  return enrichSearchWithWatchlist(stocks, userEmail)
+}
