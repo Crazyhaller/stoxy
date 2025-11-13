@@ -150,7 +150,7 @@ export const WELCOME_EMAIL_TEMPLATE = `<!DOCTYPE html>
                             
                             <!-- Footer Text -->
                             <p class="mobile-text dark-text-muted" style="margin: 40px 0 0 0; font-size: 14px; line-height: 1.5; color: #CCDADC !important; text-align: center;">
-                               Stoxy HQ, 200 Market Street, San Francisco, CA 94105<br>
+                               Stoxy HQ, Suvigya's unknown hideout<br>
                                 <a href="#" style="color: #CCDADC !important; text-decoration: underline;">Unsubscribe</a> | 
                                 <a href="https://suvigya-stoxy.vercel.app/" style="color: #CCDADC !important; text-decoration: underline;">Visit Stoxy</a><br>
                                 © 2025 Stoxy
