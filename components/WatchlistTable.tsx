@@ -1,23 +1,79 @@
 'use client'
 
 import React, { useEffect, useState } from 'react'
-import TradingViewWidget from './TradingViewWidget'
-import { BASELINE_WIDGET_CONFIG } from '@/lib/constants'
+import LazyTradingView from './LazyTradingView'
 import Link from 'next/link'
+import { generateSparklineData } from '@/lib/utils/sparkline'
 
-const WatchlistTable = () => {
-  const [items, setItems] = useState<
-    {
-      symbol: string
-      company: string
-      addedAt?: string
-      price?: number
-      change?: number
-    }[]
-  >([])
-  const [loading, setLoading] = useState(true)
+interface WatchlistItem {
+  symbol: string
+  company: string
+  addedAt?: string
+}
+
+interface TableItem extends WatchlistItem {
+  price?: number
+  change?: number
+}
+
+interface WatchlistTableProps {
+  initialItems?: WatchlistItem[]
+}
+
+const WatchlistTable: React.FC<WatchlistTableProps> = ({
+  initialItems = [],
+}) => {
+  const [items, setItems] = useState<TableItem[]>(initialItems)
+  const [loading, setLoading] = useState(
+    !initialItems || initialItems.length === 0
+  )
 
   const fetchItems = async () => {
+    // If we already have initial items from server, fetch quotes only
+    if (items.length > 0 && initialItems && initialItems.length > 0) {
+      try {
+        if (items.length > 0) {
+          const symbolsArray = items.map((it: TableItem) => it.symbol)
+          const quotesRes = await fetch('/api/finnhub/quotes', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ symbols: symbolsArray }),
+          })
+          if (!quotesRes.ok) throw new Error('Failed to fetch quotes')
+
+          const quotesData = await quotesRes.json()
+          const quotesBySymbol = (quotesData.quotes || []).reduce(
+            (
+              acc: Record<string, unknown>,
+              q: { symbol: string; quote: unknown }
+            ) => {
+              acc[q.symbol] = q.quote
+              return acc
+            },
+            {}
+          )
+
+          // Update all items with quotes
+          setItems((prev) =>
+            prev.map((p) => {
+              const quote = quotesBySymbol[p.symbol]
+              return {
+                ...p,
+                price: quote?.c as number | undefined,
+                change: quote?.dp as number | undefined,
+              }
+            })
+          )
+        }
+      } catch (error) {
+        console.error('Failed to fetch batch quotes', error)
+      } finally {
+        setLoading(false)
+      }
+      return
+    }
+
+    // Otherwise fetch both items and quotes
     setLoading(true)
     try {
       const res = await fetch('/api/watchlist')
@@ -29,29 +85,47 @@ const WatchlistTable = () => {
       })
       setItems(mapped)
 
-      // fetch quotes for each symbol (small parallel requests)
-      await Promise.all(
-        mapped.map(
-          async (it: { symbol: string; company: string; addedAt?: string }) => {
-            try {
-              const q = await fetch(
-                `/api/finnhub/quote?symbol=${encodeURIComponent(it.symbol)}`
-              )
-              if (!q.ok) return
-              const dq = await q.json()
-              setItems((prev) =>
-                prev.map((p) =>
-                  p.symbol === it.symbol
-                    ? { ...p, price: dq?.quote?.c, change: dq?.quote?.dp }
-                    : p
-                )
-              )
-            } catch (e) {
-              console.error('quote fetch error', e)
-            }
-          }
-        )
-      )
+      // Fetch all quotes in one batch request
+      if (mapped.length > 0) {
+        try {
+          const symbolsArray = mapped.map(
+            (it: { symbol: string; company: string; addedAt?: string }) =>
+              it.symbol
+          )
+          const quotesRes = await fetch('/api/finnhub/quotes', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ symbols: symbolsArray }),
+          })
+          if (!quotesRes.ok) throw new Error('Failed to fetch quotes')
+
+          const quotesData = await quotesRes.json()
+          const quotesBySymbol = (quotesData.quotes || []).reduce(
+            (
+              acc: Record<string, unknown>,
+              q: { symbol: string; quote: unknown }
+            ) => {
+              acc[q.symbol] = q.quote
+              return acc
+            },
+            {}
+          )
+
+          // Update all items with quotes
+          setItems((prev) =>
+            prev.map((p) => {
+              const quote = quotesBySymbol[p.symbol]
+              return {
+                ...p,
+                price: quote?.c as number | undefined,
+                change: quote?.dp as number | undefined,
+              }
+            })
+          )
+        } catch (error) {
+          console.error('Failed to fetch batch quotes', error)
+        }
+      }
     } catch (error) {
       console.error('Failed fetching watchlist', error)
       setItems([])
@@ -62,6 +136,7 @@ const WatchlistTable = () => {
 
   useEffect(() => {
     fetchItems()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const handleWatchlistChange = (symbol: string, added: boolean) => {
@@ -150,18 +225,12 @@ const WatchlistTable = () => {
 
             {/* Chart */}
             <div className="mb-4">
-              <div className="h-28 w-full overflow-hidden rounded-lg border border-gray-700/50 bg-gray-900/50">
-                <TradingViewWidget
-                  scriptUrl={`https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js`}
-                  config={{
-                    ...BASELINE_WIDGET_CONFIG(it.symbol),
-                    width: '100%',
-                    height: 112,
-                  }}
-                  height={112}
-                  className="rounded-lg"
-                />
-              </div>
+              <LazyTradingView
+                symbol={it.symbol}
+                height={112}
+                className="rounded-lg"
+                sparklineData={generateSparklineData(it.price, it.change)}
+              />
             </div>
 
             {/* Price & Change Footer */}

@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server'
 
 const FINNHUB_BASE = 'https://finnhub.io/api/v1'
 
+export const revalidate = 60 // Cache results for 60 seconds
+
 export async function GET(request: Request) {
   try {
     const url = new URL(request.url)

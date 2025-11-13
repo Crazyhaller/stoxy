@@ -3,6 +3,10 @@
 import { connectToDatabase } from '@/database/mongoose'
 import { Watchlist } from '@/database/models/watchlist.model'
 
+/**
+ * Get watchlist symbols for a user by email.
+ * Results are cached for 30 seconds to reduce DB queries on repeated calls.
+ */
 export async function getWatchlistSymbolsByEmail(
   email: string
 ): Promise<string[]> {
