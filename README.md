@@ -1,36 +1,96 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 📈 Stoxy — Real-time Stock Market Dashboard
 
-## Getting Started
+A modern, blazing-fast **stock market web app** built with **Next.js**, **React**, and **MongoDB**, designed for traders and investors who want **smarter watchlists**, **faster insights**, and **actionable alerts** — all in one elegant dashboard.
 
-First, run the development server:
+![Dashboard Preview](public/assets/images/dashboard.jpeg)
 
-```bash
+---
+
+## 🚀 Features
+
+✅ **Personalized Watchlists** — Add, remove, and organize stocks with instant updates.  
+✅ **Live Market Data** — Integrated with **Finnhub API** for real-time price movements.  
+✅ **AI-Powered Daily Summaries** — Automated daily stock and market insights delivered via email using **Inngest** + **Nodemailer**.  
+✅ **TradingView Widgets** — Embedded professional-grade charts and heatmaps.  
+✅ **Secure Authentication** — Managed with **Better Auth**, session persistence, and API protection.  
+✅ **Debounced Stock Search** — Lightning-fast lookup with watchlist state enrichment.  
+✅ **Responsive Modern UI** — Built with **Tailwind CSS** and **ShadCN** components.  
+✅ **Optimized Backend Workflows** — Background job processing powered by **Inngest**.  
+✅ **Deployed on Vercel** — Serverless, fast, and scalable deployment.
+
+---
+
+## 🧠 Tech Stack
+
+| Category            | Technology                                                             |
+| ------------------- | ---------------------------------------------------------------------- |
+| **Frontend**        | Next.js 14 (App Router), React 18, TypeScript, Tailwind CSS, ShadCN/UI |
+| **Backend**         | Next.js API Routes, Inngest, Nodemailer                                |
+| **Database**        | MongoDB (Mongoose)                                                     |
+| **Auth**            | Better Auth                                                            |
+| **Data Provider**   | Finnhub API                                                            |
+| **Charts**          | TradingView Embeds                                                     |
+| **Hosting**         | Vercel                                                                 |
+| **Automation / DX** | CodeRabbit                                                             |
+
+---
+
+## 📸 Preview
+
+> _"Smarter watchlists. Faster decisions."_
+
+| Market Overview | Heatmap | News & Quotes |
+
+---
+
+## ⚙️ Setup Instructions
+
+### 1️⃣ Clone the repository
+
+git clone https://github.com/yourusername/stoxy.git
+cd stoxy
+
+### 2️⃣ Install dependencies
+
+npm install
+
+### 3️⃣ Add environment variables
+
+Create a `.env.local` file and include:
+
+NODE_ENV='development'
+NEXT_PUBLIC_BASE_URL='http://localhost:3000'
+MONGODB_URI=
+BETTER_AUTH_SECRET=
+BETTER_AUTH_URL=http://localhost:3000
+GEMINI_API_KEY=
+NODEMAILER_EMAIL=
+NODEMAILER_PASSWORD=
+FINNHUB_API_KEY=
+
+### 4️⃣ Run the development server
+
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 5️⃣ Open your browser
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Visit → http://localhost:3000
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
 
-## Learn More
+## 🧑‍💻 Author
 
-To learn more about Next.js, take a look at the following resources:
+**Suvigya Mishra**  
+💼 Full-stack Developer | React, Next.js, and SaaS Enthusiast  
+🔗 LinkedIn: https://linkedin.com/in/suvigyamishra  
+🔗 GitHub: https://github.com/crazyhaller
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 🪪 License
 
-## Deploy on Vercel
+This project is licensed under the **MIT License** — feel free to use and modify with attribution.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+---
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+⭐ If you like this project, please consider giving it a star on GitHub!
