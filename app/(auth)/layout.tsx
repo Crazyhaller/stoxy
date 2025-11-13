@@ -12,14 +12,16 @@ const Layout = async ({ children }: { children: React.ReactNode }) => {
   return (
     <main className="auth-layout">
       <section className="auth-left-section scrollbar-hide-default">
-        <Link href="/" className="auth-logo">
+        <Link href="/" className="auth-logo flex items-center gap-2">
           <Image
-            src="/assets/images/logo.png"
+            src="/assets/icons/logo.svg"
             width={140}
             height={32}
             className="h-8 w-auto"
             alt="Stoxy Logo"
           />
+          {/* Brand name next to the icon */}
+          <span className="text-yellow-400 font-semibold text-lg">Stoxy</span>
         </Link>
         <div className="pb-6 lg:pb-8 flex-1">{children}</div>
       </section>

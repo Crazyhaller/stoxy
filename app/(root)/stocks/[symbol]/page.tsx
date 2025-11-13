@@ -1,5 +1,5 @@
 import TradingViewWidget from '@/components/TradingViewWidget'
-import WatchlistButton from '@/components/WatchlistButton'
+import StockWatchlistButton from '@/components/StockWatchlistButton'
 import {
   SYMBOL_INFO_WIDGET_CONFIG,
   CANDLE_CHART_WIDGET_CONFIG,
@@ -8,10 +8,19 @@ import {
   COMPANY_PROFILE_WIDGET_CONFIG,
   COMPANY_FINANCIALS_WIDGET_CONFIG,
 } from '@/lib/constants'
+// watchlist membership for this page is determined client-side by
+// `components/StockWatchlistButton` which fetches `/api/watchlist`
 
 export default async function StockDetails({ params }: StockDetailsPageProps) {
   const { symbol } = await params
+  const upperSymbol = symbol.toUpperCase().trim()
   const scriptUrl = `https://s3.tradingview.com/external-embedding/embed-widget-`
+
+  // We no longer do a server-side watchlist check here; the client
+  // `StockWatchlistButton` will fetch `/api/watchlist` and decide whether
+  // the current symbol is in the user's watchlist. Keep company name
+  // as the symbol by default.
+  const companyName = upperSymbol
 
   return (
     <div className="flex min-h-screen p-4 md:p-6 lg:p-8">
@@ -42,11 +51,7 @@ export default async function StockDetails({ params }: StockDetailsPageProps) {
         {/* Right column */}
         <div className="flex flex-col gap-6">
           <div className="flex items-center justify-between">
-            <WatchlistButton
-              symbol={symbol.toUpperCase()}
-              company={symbol.toUpperCase()}
-              isInWatchlist={false}
-            />
+            <StockWatchlistButton symbol={upperSymbol} company={companyName} />
           </div>
           <TradingViewWidget
             scriptUrl={`${scriptUrl}technical-analysis.js`}
