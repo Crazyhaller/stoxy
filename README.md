@@ -80,7 +80,7 @@ A production-ready, full-stack stock market dashboard built with **Next.js 15**,
 | **UI Components**  | Radix UI, Lucide Icons, cmdk (command palette)                              |
 | **External APIs**  | Finnhub (quotes, profiles), TradingView (charts), Inngest (background jobs) |
 | **Email**          | Nodemailer with custom HTML templates                                       |
-| **DevOps**         | Vercel deployment, Docker support                                           |
+| **DevOps**         | Vercel deployment                                          |
 | **Dev Tools**      | ESLint, TypeScript, Turbopack                                               |
 
 ---
@@ -408,31 +408,7 @@ Visit [Inngest Dashboard](https://app.inngest.com) to monitor job runs and perfo
 3. **Custom Domain** (optional)
    - Go to project settings → Domains
    - Add your custom domain
-
-### Docker
-
-```dockerfile
-FROM node:18-alpine AS builder
-WORKDIR /app
-COPY . .
-RUN npm ci && npm run build
-
-FROM node:18-alpine
-WORKDIR /app
-COPY --from=builder /app/.next ./.next
-COPY --from=builder /app/package*.json ./
-RUN npm ci --omit=dev
-EXPOSE 3000
-CMD ["npm", "start"]
-```
-
-Build and run:
-
-```bash
-docker build -t stoxy .
-docker run -p 3000:3000 --env-file .env.local stoxy
-```
-
+   
 ---
 
 ## 📝 Development
