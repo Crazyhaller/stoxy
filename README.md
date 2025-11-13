@@ -41,7 +41,13 @@ A production-ready, full-stack stock market dashboard built with **Next.js 15**,
 - Market overview, heatmaps, and company profiles (TradingView)
 - Intraday candlestick charts and technical analysis widgets
 
-### 🔐 **Production-Grade Authentication**
+### � **Automated Market Insights**
+
+- **Daily AI summaries** generated via Inngest background jobs
+- Personalized email digests with watchlist performance & market news
+- Scheduled jobs run reliably at scale without manual intervention
+
+### �🔐 **Production-Grade Authentication**
 
 - Secure session-based auth with better-auth v1
 - Email verification & profile management
@@ -268,6 +274,68 @@ Finnhub endpoints cached with `s-maxage=60, stale-while-revalidate=3600`.
 
 ---
 
+## 🔄 Background Jobs with Inngest
+
+Stoxy leverages **Inngest** for reliable, scalable background job processing:
+
+### **Daily Market Summaries**
+
+- Scheduled job runs daily at 9:00 AM ET
+- Fetches market data, watchlist stocks, and top news
+- Generates personalized AI-powered summaries via Gemini API
+- Sends rich HTML email with market insights & watchlist updates
+
+### **Email Notifications**
+
+- Real-time price alerts for watchlist stocks
+- Market trend digests with key movers
+- Portfolio performance updates
+- News headlines relevant to user's holdings
+
+### **Implementation**
+
+```typescript
+// lib/inngest/functions.ts
+export const dailySummary = inngest.createFunction(
+  { id: 'daily-market-summary' },
+  { cron: '0 9 * * *' }, // 9 AM daily
+  async ({ step }) => {
+    const users = await step.run('fetch-users', async () => {
+      return db.collection('user').find().toArray()
+    })
+
+    for (const user of users) {
+      await step.run(`summary-${user.id}`, async () => {
+        const watchlist = await getWatchlistByUserId(user.id)
+        const quotes = await fetchBatchQuotes(watchlist.map((w) => w.symbol))
+        const summary = await generateSummary(quotes, user.preferences)
+        await sendEmail(user.email, summary)
+      })
+    }
+  }
+)
+```
+
+### **Key Features**
+
+- ✅ **Reliability** – Guaranteed execution with automatic retries
+- ✅ **Scalability** – Handle millions of jobs without infrastructure overhead
+- ✅ **Visibility** – Real-time job monitoring & logs in Inngest dashboard
+- ✅ **Flexibility** – Cron jobs, event-driven, or manual triggers
+- ✅ **Error Handling** – Automatic backoff & dead-letter queues
+
+### **Configuration**
+
+```env
+# .env.local
+INNGEST_EVENT_KEY=your-event-key
+INNGEST_API_KEY=your-api-key
+```
+
+Visit [Inngest Dashboard](https://app.inngest.com) to monitor job runs and performance.
+
+---
+
 ## 🔐 Security Best Practices
 
 ✅ **Session-based Auth** – Secure HTTP-only cookies via better-auth  
@@ -475,7 +543,9 @@ Special thanks to:
 - [Finnhub](https://finnhub.io) – Free stock market data
 - [TradingView](https://www.tradingview.com/) – Professional charting widgets
 - [better-auth](https://www.better-auth.com/) – Simple, modern auth
+- [Inngest](https://www.inngest.com/) – Reliable background job processing
 - [MongoDB](https://www.mongodb.com/) – Flexible NoSQL database
+- [Nodemailer](https://nodemailer.com/) – Email delivery service
 
 ---
 
