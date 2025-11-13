@@ -510,14 +510,6 @@ We welcome contributions! Here's how:
 
 ---
 
-## 📄 License
-
-Licensed under the **MIT License** — feel free to use in personal or commercial projects with attribution.
-
-See [LICENSE](./LICENSE) for details.
-
----
-
 ## 🙋 Support
 
 - 🐛 **Found a bug?** Open an [Issue](https://github.com/Crazyhaller/stoxy/issues)
